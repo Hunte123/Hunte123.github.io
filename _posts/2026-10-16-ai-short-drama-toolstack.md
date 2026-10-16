@@ -1,6 +1,6 @@
 ---
 title: AI 短剧工具栈 2026：主流方案、真实成本和可行性边界
-date: 2026-10-16 16:00:00 +0800
+date: 2026-10-16 15:40:00 +0800
 categories: [AI 创作]
 tags: [AI 短剧, 工具, 视频生成]
 render_with_liquid: false
