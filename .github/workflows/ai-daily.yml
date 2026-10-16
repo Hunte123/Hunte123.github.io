@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # 推送后需要触发 Chirpy 部署工作流
 
 concurrency:
   group: ai-daily
@@ -25,13 +26,25 @@ jobs:
         run: python tools/ai_daily.py
 
       - name: 提交并推送
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add _posts
           if git diff --cached --quiet; then
             echo "今日无新日报，跳过提交"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "auto: AI 日报 $(TZ=Asia/Shanghai date +%F)"
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # 关键：GITHUB_TOKEN 的推送不会触发其它工作流（防递归），
+      # 而 Chirpy 站点靠 pages-deploy.yml 构建。
+      # 必须显式触发部署，否则网站会回退成未渲染的裸文件。
+      - name: 触发站点部署
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run pages-deploy.yml
