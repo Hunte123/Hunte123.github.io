@@ -1,8 +1,21 @@
 ---
-# the default layout is 'page'
+title: 关于
 icon: fas fa-info-circle
 order: 4
 ---
 
-> Add Markdown syntax content to file `_tabs/about.md`{: .filepath } and it will show up on this page.
-{: .prompt-tip }
+> 沉默的鲨鱼，游过深海，也写代码。
+
+我是 Hunte，一个对 AI 基础设施着迷的工程师。
+
+**在折腾的方向：**
+
+- **LLM 基础设施**：向量数据库、RAG 工具链、LLM 网关、Agent 框架——喜欢从零造轮子来理解原理，而不只是调 API
+- **AI 工程化**：关注 Agent 真正落地的那部分：上下文工程、可靠性、安全边界
+- **数据驱动的一切**：包括用数据说话的投资
+
+**这个博客写什么：**
+
+造轮子过程中的原理拆解、工程取舍、真实踩坑记录。不搬运文档，不写没动手验证过的东西。
+
+联系我：[GitHub](https://github.com/Hunte123)
