@@ -1,0 +1,37 @@
+name: AI Daily Digest
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # UTC 00:00 = 北京时间 08:00
+  workflow_dispatch: # 支持手动触发
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-daily
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 抓取并生成日报
+        run: python tools/ai_daily.py
+
+      - name: 提交并推送
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _posts
+          if git diff --cached --quiet; then
+            echo "今日无新日报，跳过提交"
+          else
+            git commit -m "auto: AI 日报 $(TZ=Asia/Shanghai date +%F)"
+            git push
+          fi
