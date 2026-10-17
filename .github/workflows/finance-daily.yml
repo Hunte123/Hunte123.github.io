@@ -1,0 +1,50 @@
+name: Finance Daily Digest
+
+on:
+  schedule:
+    - cron: "23 9 * * *" # UTC 09:23 = 北京 17:23；A股收盘后，避开整点高峰
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write # 推送后需要触发 Chirpy 部署工作流
+
+concurrency:
+  group: finance-daily
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 抓取并生成财经日报
+        env:
+          GLM_API_KEY: ${{ secrets.GLM_API_KEY }}
+        run: python tools/finance_daily.py
+
+      - name: 提交并推送
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _posts
+          if git diff --cached --quiet; then
+            echo "今日无新日报，跳过提交"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "auto: 财经日报 $(TZ=Asia/Shanghai date +%F)"
+            git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # GITHUB_TOKEN 的推送不会触发其它工作流（防递归），必须显式触发部署
+      - name: 触发站点部署
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run pages-deploy.yml
