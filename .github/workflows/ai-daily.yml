@@ -2,7 +2,7 @@ name: AI Daily Digest
 
 on:
   schedule:
-    - cron: "0 0 * * *" # UTC 00:00 = 北京时间 08:00
+    - cron: "23 0 * * *" # UTC 00:23 = 北京 08:23；避开整点高峰（GitHub 高峰档定时任务会延迟甚至丢弃）
   workflow_dispatch: # 支持手动触发
 
 permissions:
@@ -23,6 +23,8 @@ jobs:
           python-version: "3.12"
 
       - name: 抓取并生成日报
+        env:
+          GLM_API_KEY: ${{ secrets.GLM_API_KEY }}
         run: python tools/ai_daily.py
 
       - name: 提交并推送
