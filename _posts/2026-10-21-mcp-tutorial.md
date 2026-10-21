@@ -1,6 +1,6 @@
 ---
 title: "MCP 实战：30分钟给你的 AI 接上工具"
-date: 2026-10-21 13:10:00 +0800
+date: 2026-10-21 12:30:00 +0800
 categories: [技术教程]
 tags: [MCP, AI, Python]
 permalink: /posts/mcp-tutorial/
